@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    android:background="#010101"
     tools:layout_editor_absoluteY="25dp">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -23,6 +24,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="164dp"
-            android:text="Pomadero" />
+            android:text="Pomadero"
+            android:textSize="30sp" />
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

@@ -5,6 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -12,12 +15,13 @@ import android.view.View;
 public class ClockView extends View {
 
     long current = System.currentTimeMillis();
-    StopWatch c = new StopWatch(current, current + (45 * 1000));
+    boolean refresh = true;
+    StopWatch c = new StopWatch(current, current + (5* 1000));
     private int height, width = 0;
     private int padding = 0;
     private int fontSize = 0;
     private int numeralSpacing = 0;
-    private int handTruncation, hourHandTruncation = 0;
+    private int handTruncation = 0;
     private int radius = 0;
     private Paint paint;
     private boolean isInit;
@@ -51,9 +55,16 @@ public class ClockView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        boolean refresh = true;
         if (!isInit) {
             initClock();
+        }
+
+        if (!refresh) {
+            canvas.drawColor(Color.BLACK);
+            paint.setTextSize(270);
+            canvas.drawText("Time Up!",0,height/2,paint);
+            return;
+
         }
         try {
             canvas.drawColor(Color.BLACK);
@@ -62,18 +73,21 @@ public class ClockView extends View {
             drawNumeral(canvas);
             drawHands(canvas);
 
-            if(refresh) {
+            if (refresh) {
                 postInvalidateDelayed(500);
                 invalidate();
             }
         } catch (Exception e) {
             refresh = false;
+            postInvalidateDelayed(500);
+            invalidate();
         }
+
     }
 
-    private void drawHand(Canvas canvas, double loc, boolean isHour) {
+    private void drawHand(Canvas canvas, double loc) {
         double angle = Math.PI * loc / 30 - Math.PI / 2;
-        int handRadius = isHour ? radius - handTruncation - hourHandTruncation : radius - handTruncation;
+        int handRadius = radius - handTruncation;
         canvas.drawLine(width / 2, height / 2,
                 (float) (width / 2 + Math.cos(angle) * handRadius),
                 (float) (height / 2 + Math.sin(angle) * handRadius),
@@ -81,8 +95,8 @@ public class ClockView extends View {
     }
 
     private void drawHands(Canvas canvas) throws Exception {
-        drawHand(canvas, c.getMinutes(), false);
-        drawHand(canvas, c.getSeconds(), false);
+        drawHand(canvas, c.getMinutes());
+        drawHand(canvas, c.getSeconds());
     }
 
     private void drawNumeral(Canvas canvas) {
